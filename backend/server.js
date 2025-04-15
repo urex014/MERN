@@ -9,9 +9,9 @@ app.use(express.json());
 app.post("/api/products", async (req,res)=>{//this app.something is to add items
     const product = req.body;
     if(!product.name || !product.image || !product.price){
-        return res.status(400).json({success:false, message:"you cant leave this blank"})
+        return res.status(400).json({success:false, message:"you cant leave this blank"});
     }
-    const newProduct=new Product(product);
+    const newProduct=new Product(product);//get from our db
     
 
     try{
@@ -27,7 +27,7 @@ app.delete('/api/products/:id', async (req,res)=>{
     const {id} = req.params;
     try{
         await Product.findByIdAndDelete(id);
-        res.status(200).json({success:true, message:"deleted successfully"})
+        res.status(200).json({success:true, message:"deleted successfully"});
     }catch(error){
         console.error(`this shit failed: ${error}`);
         res.status(500).json({success:false, message:"product not found"});
@@ -36,11 +36,28 @@ app.delete('/api/products/:id', async (req,res)=>{
 //another endpoint to colelct from db and show the user 
 app.get('/api/products', async (req,res)=>{
     try{
-        const products = Product.find({}) 
-        res.status(200).json({message:"it worked", succes:true});
+        const products = await Product.find({}) ;
+        res.status(200).json({message:`${products}`, succes:true});
         console.log("it worked");
     }catch(error){
         res.status(500).json({success:false, message:"couldn't find product"});
+    }
+});
+app.put('api/products/:id', async(req,res)=>{
+    const {id} = req.params;
+    const product = req.body;
+    if(!mongoose.Types.ObjectId.isValid(id)){
+        return res.status(404).json({message:"invalid product", success:false});
+    }
+    try{
+        const updatedProduct = await product.findByIdAndUpdate(id,product, {new:true});
+        res.status(200).json({
+            message:`${updatedProduc}`,
+            success:true
+        })
+    }catch(error){
+        res.status(500).json({message:'failed', success:false})
+        console.log(`error:${error}`);
     }
 })
 //console.log(process.env.MONGO_URL)
