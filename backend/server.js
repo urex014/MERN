@@ -23,13 +23,28 @@ app.post("/api/products", async (req,res)=>{//this app.something is to add items
     }
 })
 //im creating a new app.something to delete items
-app.delete('/api/products/id:', (req,res)=>{
-    const {id} = req.params
-    console.log(`id:${id}`)
+app.delete('/api/products/:id', async (req,res)=>{
+    const {id} = req.params;
+    try{
+        await Product.findByIdAndDelete(id);
+        res.status(200).json({success:true, message:"deleted successfully"})
+    }catch(error){
+        console.error(`this shit failed: ${error}`);
+        res.status(500).json({success:false, message:"product not found"});
+    }
+})
+//another endpoint to colelct from db and show the user 
+app.get('/api/products', async (req,res)=>{
+    try{
+        const products = Product.find({}) 
+        res.status(200).json({message:"it worked", succes:true});
+        console.log("it worked");
+    }catch(error){
+        res.status(500).json({success:false, message:"couldn't find product"});
+    }
 })
 //console.log(process.env.MONGO_URL)
 app.listen(5000, ()=>{
     connectDB()
     console.log("this is listening at http://localhost:5000/products");
 })
-//WXV27UcUi7g1QMbq
