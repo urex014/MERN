@@ -40,7 +40,7 @@ app.get('/api/products', async (req,res)=>{
         res.status(200).json({message:`${products}`, succes:true});
         console.log("it worked");
     }catch(error){
-        res.status(500).json({success:false, message:"couldn't find product"});
+        res.status(500).json({success:false, message:"couldn'tt find product"});
     }
 });
 app.put('api/products/:id', async(req,res)=>{
@@ -52,7 +52,7 @@ app.put('api/products/:id', async(req,res)=>{
     try{
         const updatedProduct = await product.findByIdAndUpdate(id,product, {new:true});
         res.status(200).json({
-            message:`${updatedProduc}`,
+            message:`${updatedProduct}`,
             success:true
         })
     }catch(error){
